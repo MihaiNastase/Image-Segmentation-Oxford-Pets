@@ -12,7 +12,7 @@ import random # For testing and evaluation
 from tensorflow import keras
 from tensorflow.keras.preprocessing.image import load_img # Utility to load images into tensors
 
-
+""" Function to collect the paths of all image data """
 def get_image_paths(input_dir, target_dir):
     input_img_paths = sorted(
     [
@@ -30,6 +30,19 @@ def get_image_paths(input_dir, target_dir):
     )
 
     return input_img_paths, target_img_paths
+
+""" Function to split image data between train and validaion sets """
+def train_test_split(input_img_paths, target_img_paths, split=0.8, r=0):
+    """ Input same random seed to ensure that the the image paths are index aligned """
+    random.Random(r).shuffle(input_img_paths)
+    random.Random(r).shuffle(target_img_paths)
+    """ Do split based on percentage """
+    train_input_img_paths = input_img_paths[:int(len(input_img_paths)*split)]
+    train_target_img_paths = target_img_paths[:int(len(target_img_paths)*split)]
+    test_input_img_paths = input_img_paths[-int(len(input_img_paths)*round(1-split,1)):]
+    test_target_img_paths = target_img_paths[-int(len(target_img_paths)*round(1-split,1)):]
+    
+    return train_input_img_paths, train_target_img_paths, test_input_img_paths, test_target_img_paths
 
 """ Handler to iterate over the data (as Numpy arrays) """
 class DataHandler(keras.utils.Sequence):
